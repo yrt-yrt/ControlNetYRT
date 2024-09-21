@@ -7,4 +7,5 @@ Next are the steps for training the model and implementing backpropagation for t
 <br>
 ## Model Training
 The specific training process can be referenced in the training procedure of the ControlNet source code below, which is essentially consistent in steps:<br>
-https://github.com/lllyasviel/ControlNet/blob/main/docs/train.md
+https://github.com/lllyasviel/ControlNet/blob/main/docs/train.md\<br>
+It’s important to note that, according to the above process, the trained model is not saved. However, the training scripts in this repository include operations for saving the model files, so you don’t need to handle this yourself.
