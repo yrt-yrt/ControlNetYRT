@@ -6,3 +6,5 @@ The preprocessing network of the ControlNet model has been modified to respond t
 Next are the steps for training the model and implementing backpropagation for the input.<br>
 <br>
 ## Model Training
+The specific training process can be referenced in the training procedure of the ControlNet source code below, which is essentially consistent in steps:<br>
+https://github.com/lllyasviel/ControlNet/blob/main/docs/train.md
