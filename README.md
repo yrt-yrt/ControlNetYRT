@@ -5,4 +5,4 @@ The preprocessing network of the ControlNet model has been modified to respond t
 <br>
 Next are the steps for training the model and implementing backpropagation for the input.<br>
 <br>
-##Model Training
+## Model Training
