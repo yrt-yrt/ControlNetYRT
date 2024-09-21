@@ -204,11 +204,16 @@ class DDIMSampler(object):
         alphas_prev = self.model.alphas_cumprod_prev if use_original_steps else self.ddim_alphas_prev
         sqrt_one_minus_alphas = self.model.sqrt_one_minus_alphas_cumprod if use_original_steps else self.ddim_sqrt_one_minus_alphas
         sigmas = self.model.ddim_sigmas_for_original_num_steps if use_original_steps else self.ddim_sigmas
+        
+        alphas_np = alphas.cpu().numpy().reshape(-1)
+        #alphas_prev_np = alphas_prev.cpu().numpy().reshape(-1)
+        sqrt_one_minus_alphas_np = sqrt_one_minus_alphas.cpu().numpy().reshape(-1)
+        sigmas_np = sigmas.cpu().numpy().reshape(-1)
         # select parameters corresponding to the currently considered timestep
-        a_t = torch.full((b, 1, 1, 1), alphas[index], device=device)
+        a_t = torch.full((b, 1, 1, 1), alphas_np[index], device=device)
         a_prev = torch.full((b, 1, 1, 1), alphas_prev[index], device=device)
-        sigma_t = torch.full((b, 1, 1, 1), sigmas[index], device=device)
-        sqrt_one_minus_at = torch.full((b, 1, 1, 1), sqrt_one_minus_alphas[index],device=device)
+        sigma_t = torch.full((b, 1, 1, 1), sigmas_np[index], device=device)
+        sqrt_one_minus_at = torch.full((b, 1, 1, 1), sqrt_one_minus_alphas_np[index],device=device)
 
         # current prediction for x_0
         if self.model.parameterization != "v":

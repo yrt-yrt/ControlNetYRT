@@ -18,6 +18,18 @@ from ldm.models.diffusion.ddpm import LatentDiffusion
 from ldm.util import log_txt_as_img, exists, instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
 
+class MLP(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MLP, self).__init__()
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 512)
+        self.fc3 = nn.Linear(512, 40 * 40 * 320)  # Output size: 128x64x320
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        x = torch.relu(self.fc3(x))
+        return x.view(-1, 320, 40, 40)  # Reshape to 320x128x64
 
 class ControlledUnetModel(UNetModel):
     def forward(self, x, timesteps=None, context=None, control=None, only_mid_control=False, **kwargs):
@@ -143,7 +155,7 @@ class ControlNet(nn.Module):
             ]
         )
         self.zero_convs = nn.ModuleList([self.make_zero_conv(model_channels)])
-
+        """
         self.input_hint_block = TimestepEmbedSequential(
             conv_nd(dims, hint_channels, 16, 3, padding=1),
             nn.SiLU(),
@@ -161,6 +173,8 @@ class ControlNet(nn.Module):
             nn.SiLU(),
             zero_module(conv_nd(dims, 256, model_channels, 3, padding=1))
         )
+        """
+        self.mlp = MLP(input_size=1, output_size=320*40*40)
 
         self._feature_size = model_channels
         input_block_chans = [model_channels]
@@ -285,8 +299,9 @@ class ControlNet(nn.Module):
         t_emb = timestep_embedding(timesteps, self.model_channels, repeat_only=False)
         emb = self.time_embed(t_emb)
 
-        guided_hint = self.input_hint_block(hint, emb, context)
-
+        #guided_hint = self.input_hint_block(hint, emb, context)
+        
+        guided_hint=self.mlp(hint)
         outs = []
 
         h = x.type(self.dtype)
@@ -322,7 +337,7 @@ class ControlLDM(LatentDiffusion):
         if bs is not None:
             control = control[:bs]
         control = control.to(self.device)
-        control = einops.rearrange(control, 'b h w c -> b c h w')
+       #control = einops.rearrange(control, 'b h w c -> b c h w')
         control = control.to(memory_format=torch.contiguous_format).float()
         return x, dict(c_crossattn=[c], c_concat=[control])
 
@@ -335,7 +350,7 @@ class ControlLDM(LatentDiffusion):
         if cond['c_concat'] is None:
             eps = diffusion_model(x=x_noisy, timesteps=t, context=cond_txt, control=None, only_mid_control=self.only_mid_control)
         else:
-            control = self.control_model(x=x_noisy, hint=torch.cat(cond['c_concat'], 1), timesteps=t, context=cond_txt)
+            control = self.control_model(x=x_noisy, hint=torch.cat(cond['c_concat'], 0), timesteps=t, context=cond_txt)
             control = [c * scale for c, scale in zip(control, self.control_scales)]
             if self.global_average_pooling:
                 control = [torch.mean(c, dim=(2, 3), keepdim=True) for c in control]
