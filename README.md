@@ -22,7 +22,7 @@ The following code can be executed to perform image generation on the browser<br
 <br>
 If you don't want to get the result in the browser, you can execute the following code to get the result of saving the image generation<br>
 `python test2.py`<br>
-
+<br>
 ## Backpropagation to update input values
 The code for backpropagation to update the input is executed as follows:<br>
 <br>
