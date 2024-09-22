@@ -14,6 +14,15 @@ The biggest difference from the previous ControlNet training process lies in the
 <br>
 To verify the feasibility of updating input values through backpropagation in the latter half of the process, the numerical data in the dataset consists of simple one-dimensional data representing rotation angles centered around images. From the perspective of the forward execution of the generated model, the trained model can generate images based on the input angle values and the information from the prompts, altering the images according to the input angles. From the perspective of updating input values through backpropagation, for example, if the initial input angle value is -4 and there is a target image with the same content rotated by 2 degrees, the error between the initially generated image and the target image can be used. By freezing the network model parameters and continuously applying gradient descent backpropagation optimization to the input value, the input value can ultimately converge to a value near 2 degrees.<br>
 <br>
+
+## Model Validation
+The following code can be executed to perform image generation on the browser<br>
+<br>
+`python test1.py`<br>
+<br>
+If you don't want to get the result in the browser, you can execute the following code to get the result of saving the image generation<br>
+`python test2.py`<br>
+
 ## Backpropagation to update input values
 The code for backpropagation to update the input is executed as follows:<br>
 <br>
@@ -27,6 +36,6 @@ Note: The results run on the training set data are basically as expected, for ex
 The following code accelerates image generation during back propagation.<br>
 <br>
 `python test5_s1.py`<br>
-The main principle is to update the input values of the previous step of the image obtained as the next image generation plus noise denoising starting point, before the image generation of noise reduction requires 32 steps, after the change of 10 steps to generate the target image, but also reduces the time of the input values converge to the target data.
+The main principle is to update the input values of the previous step of the image obtained as the next image generation plus noise denoising starting point, before the image generation of noise reduction requires 32 steps, after the change of 10 steps to generate the target image, but also reduces the time of the input values converge to the target data.<br>
 
-Translated with DeepL.com (free version)
+
