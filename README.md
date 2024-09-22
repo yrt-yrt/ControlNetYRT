@@ -20,6 +20,13 @@ The code for backpropagation to update the input is executed as follows:<br>
 `python test5.py`<br>
 <br>
 You can change the input_image_path and target_image_path in it to your own input image and output image paths, and the control variable represents the input numeric data, and you can randomize the initial value yourself. After the code runs control will gradually update to the rotation angle corresponding to the target image.<br>
-Note: The results run on the training set data are basically as expected, for example, training with angle values within the interval -5 to +5, the results obtained within this range are basically as expected. However, as the values move away from this range, it is difficult to converge towards the target value. It is recommended to train with more datasets so that it can be adapted to a larger range of data
+Note: The results run on the training set data are basically as expected, for example, training with angle values within the interval -5 to +5, the results obtained within this range are basically as expected. However, as the values move away from this range, it is difficult to converge towards the target value. It is recommended to train with more datasets so that it can be adapted to a larger range of data<br>
+<br>
+
+## Accelerated image generation
+The following code accelerates image generation during back propagation.<br>
+<br>
+`python test5_s1.py`<br>
+The main principle is to update the input values of the previous step of the image obtained as the next image generation plus noise denoising starting point, before the image generation of noise reduction requires 32 steps, after the change of 10 steps to generate the target image, but also reduces the time of the input values converge to the target data.
 
 Translated with DeepL.com (free version)
